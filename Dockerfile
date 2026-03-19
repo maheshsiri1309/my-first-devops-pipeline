@@ -1,4 +1,6 @@
-# Use a very small Linux version
+# Use a real image
 FROM alpine:latest
-# Run a simple command
-CMD ["echo", "Hello from my first automated CI/CD build!"]
+
+# This command is wrong on purpose! 
+# There is no "run-this-fake-command" in Linux.
+RUN run-this-fake-command
