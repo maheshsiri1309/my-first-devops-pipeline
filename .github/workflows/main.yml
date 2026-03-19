@@ -1,21 +1,25 @@
-name: Docker Build Pipeline
+name: Docker Build and Security Scan
 
-# 1. When should this run? (On every "push" to the main branch)
 on:
   push:
     branches: [ "main" ]
 
-# 2. What should it do?
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest  # Use a fresh Linux VM provided by GitHub
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Step 1: Copy my code onto the VM
+        uses: actions/checkout@v4
 
       - name: Build Docker Image
-        run: docker build -t my-test-image:latest .  # Step 2: Run the Docker build
+        run: docker build -t my-secure-image:latest .
 
-      - name: Verify Build
-        run: echo "Build successful! Your first CI/CD pipeline worked."
+      # --- NEW DEVOPS SECURITY STEP ---
+      - name: Scan Image for Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'my-secure-image:latest'
+          format: 'table'
+          exit-code: '0' # This tells the pipeline "don't fail yet, just show me the risks"
+          severity: 'CRITICAL,HIGH'
